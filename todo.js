@@ -1,21 +1,7 @@
 let todoList = {
     todos: [],
-    displayTodos: function(){
-        if (this.todos.length === 0) {
-            console.log(`Nice! You've caught up with your todos!`);
-        } else {
-            for (let i = 0; i < this.todos.length; i++) {
-                if (this.todos[i].completed === true) {
-                    console.log('(X)',`${this.todos[i].text} ${this.todos[i].id} ${this.todos[i].due} 
-                    ${this.todos[i].priority} ${this.todos[i].completed}`);
-                } else {
-                    console.log('()',`${this.todos[i].text} ${this.todos[i].id} ${this.todos[i].due} 
-                    ${this.todos[i].priority} ${this.todos[i].completed}`);
-                }
-            }
-        }
-    },
     addTodo: function(todoText) {
+        debugger;
         this.todos.push({
             text: todoText,
             id: 'text_' + Date.now,
@@ -23,20 +9,20 @@ let todoList = {
             priority: null,
             completed: false
         });
-        this.displayTodos();
+      
     },
     changeTodo: function(position, text) {
         this.todos[position].text = text;
-        this.displayTodos();
+        
     },
     deleteTodo: function(position) {
         this.todos.splice(position, 1);
-        this.displayTodos();
+       
     },
     toggleCompleted: function(position) {
         let todo = this.todos[position];
         todo.completed = !todo.completed;
-        this.displayTodos();
+      
     },
 
     toggleAll: function() {
@@ -59,9 +45,65 @@ let todoList = {
             }
         }
         
-        this.displayTodos();
     }
 };
 
+let handlers = {
+    addTodo: function() {
+        let addTodoTextInput = document.getElementById('addTodoTextInput');
+        todoList.addTodo(addTodoTextInput.value);
+        addTodoTextInput.value = '';
+        view.displayTodos();
+    }, 
+    changeTodo: function() {
+        let changeTodoPositionInput = document.getElementById('changeTodoPositionInput');
+        let changeTodoTextInput = document.getElementById('changeTodoTextInput');
+        todoList.changeTodo(changeTodoPositionInput.valueAsNumber, changeTodoTextInput.value);
+        changeTodoPositionInput.value = '';
+        changeTodoTextInput.value = '';
+        view.displayTodos();
+    },
+    deleteTodo: function() {
+        let deleteTodoPositionInput = document.getElementById("deleteTodoPositionInput");
+        todoList.deleteTodo(deleteTodoPositionInput.valueAsNumber);
+        deleteTodoPositionInput.value = '';
+        view.displayTodos();
+    }, 
+    toggleCompleted: function() {
+        let toggleCompletedPositionInput = document.getElementById('toggleCompletedPositionInput');
+        todoList.toggleCompleted(toggleCompletedPositionInput.valueAsNumber);
+        toggleCompletedPositionInput.value = '';
+        view.displayTodos();
+    },
+    toggleAll: function(){
+        todoList.toggleAll();
+        view.displayTodos();
+    }, 
+};
 
-    
+let view = {
+    displayTodos: function(){
+        let todosUL = document.querySelector('ul');
+        todosUL.innerHTML='';
+
+        for (let i=0; i<todoList.todos.length; i++) {
+            let todoLi = document.createElement('li');
+            let todo = todoList.todos[i];
+            let todoTextWithCompletion = '';
+            if (todo.completed === true) {
+                todoTextWithCompletion = '(x)' + `${todo.text}`
+            } else {
+                todoTextWithCompletion = '()' + `${todo.text}`
+            }
+            todoLi.textContent = todoTextWithCompletion;
+            todosUL.appendChild(todoLi);
+        }
+    },
+    //This code is a typeError dunno why
+    createDeleteButton: function() {
+        let deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'deleteButton';
+        return deleteButton;
+    }
+};
